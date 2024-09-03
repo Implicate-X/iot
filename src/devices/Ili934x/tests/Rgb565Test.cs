@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Iot.Device.Ili934x;
 using Xunit;
 
-namespace Iot.Device.Ili934x.Tests
+namespace Ili934x.Tests
 {
     public class Rgb565Test
     {

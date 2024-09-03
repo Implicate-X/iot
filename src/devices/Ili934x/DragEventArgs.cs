@@ -4,7 +4,7 @@
 using System;
 using System.Drawing;
 
-namespace Iot.Device.Ili934x
+namespace Ili934x
 {
     /// <summary>
     /// Event arguments for dragging (moving the finger over the screen)

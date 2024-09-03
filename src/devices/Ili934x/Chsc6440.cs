@@ -7,7 +7,7 @@ using System.Device.I2c;
 using System.Drawing;
 using System.Threading;
 
-namespace Iot.Device.Ili934x
+namespace Ili934x
 {
     /// <summary>
     /// Binding for Chipsemi CHSC6540 capacitive touch screen controller
