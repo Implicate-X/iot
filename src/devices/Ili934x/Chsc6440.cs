@@ -2,14 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Device.Gpio;
 using System.Device.I2c;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Iot.Device.Ili934x
 {
@@ -28,16 +24,19 @@ namespace Iot.Device.Ili934x
 
         private readonly int _interruptPin;
         private readonly bool _shouldDispose;
+        private readonly Point[] _lastPoints;
+        private readonly Point[] _points;
+        private readonly object _lock;
+
         private GpioController? _gpioController;
+
         private I2cDevice _i2c;
 
         private bool _wasRead;
 
         private TimeSpan _interval;
 
-        private Point[] _lastPoints;
         private Point _initialTouchPoint;
-        private Point[] _points;
         private int _point0finger;
 
         private int _activeTouches;
@@ -48,7 +47,6 @@ namespace Iot.Device.Ili934x
 
         private Thread? _updateThread;
         private bool _updateThreadActive;
-        private object _lock;
         private AutoResetEvent _updateEvent;
 
         /// <summary>
@@ -225,13 +223,13 @@ namespace Iot.Device.Ili934x
                         // Read the data. Never mind trying to read the "weight" and
                         // "size" properties or using the built-in gestures: they
                         // are always set to zero.
-                        p0f = (data[3] >> 4 != 0) ? 1 : 0;
-                        p[0].X = ((data[1] << 8) | data[2]) & 0x0fff;
-                        p[0].Y = ((data[3] << 8) | data[4]) & 0x0fff;
+                        p0f = data[3] >> 4 != 0 ? 1 : 0;
+                        p[0].X = (data[1] << 8 | data[2]) & 0x0fff;
+                        p[0].Y = (data[3] << 8 | data[4]) & 0x0fff;
                         if (pts == 2)
                         {
-                            p[1].X = ((data[7] << 8) | data[8]) & 0x0fff;
-                            p[1].Y = ((data[9] << 8) | data[10]) & 0x0fff;
+                            p[1].X = (data[7] << 8 | data[8]) & 0x0fff;
+                            p[1].Y = (data[9] << 8 | data[10]) & 0x0fff;
                         }
                     }
 
@@ -293,8 +291,10 @@ namespace Iot.Device.Ili934x
             }
 
             _updateThreadActive = true;
-            _updateThread = new Thread(UpdateLoop);
-            _updateThread.Name = "Touch Controller";
+            _updateThread = new Thread(UpdateLoop)
+            {
+                Name = "Touch Controller"
+            };
             _updateThread.Start();
         }
 

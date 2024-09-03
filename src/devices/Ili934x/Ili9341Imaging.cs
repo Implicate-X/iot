@@ -3,7 +3,6 @@
 
 using System;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Iot.Device.Graphics;
@@ -68,7 +67,7 @@ namespace Iot.Device.Ili934x
 
             Parallel.For(destinationRect.Y, destinationRect.Height + destinationRect.Y, y =>
             {
-                var row = _screenBuffer.AsSpan(y * ScreenWidth, ScreenWidth);
+                Span<Rgb565> row = _screenBuffer.AsSpan(y * ScreenWidth, ScreenWidth);
                 for (int i = destinationRect.X; i < destinationRect.Width + destinationRect.X; i++)
                 {
                     int xSource = sourcePoint.X + i - destinationRect.X;
@@ -91,9 +90,9 @@ namespace Iot.Device.Ili934x
             }
             else
             {
-                int topRow = 0;
                 int bottomRow = ScreenHeight;
                 int w = ScreenWidth;
+                int topRow;
                 for (int y = 0; y < ScreenHeight; y++)
                 {
                     for (int x = 0; x < w; x++)
@@ -128,7 +127,7 @@ namespace Iot.Device.Ili934x
 
                 SetWindow(0, topRow, w, bottomRow);
                 // Send the given number of rows (+1, because including the end row)
-                var partialSpan = MemoryMarshal.Cast<Rgb565, byte>(_screenBuffer.AsSpan().Slice(topRow * w, (bottomRow - topRow + 1) * w));
+                Span<byte> partialSpan = MemoryMarshal.Cast<Rgb565, byte>(_screenBuffer.AsSpan().Slice(topRow * w, (bottomRow - topRow + 1) * w));
                 SendSPI(partialSpan);
             }
 

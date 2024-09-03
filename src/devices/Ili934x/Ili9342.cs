@@ -2,12 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using System.Collections.Generic;
 using System.Device.Gpio;
 using System.Device.Spi;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Iot.Device.Ili934x
 {
@@ -19,24 +15,23 @@ namespace Iot.Device.Ili934x
         /// <summary>
         /// Initializes new instance of ILI9342 device that will communicate using SPI bus.
         /// </summary>
-        /// <param name="spiDevice">The SPI device used for communication. This Spi device will be displayed along with the ILI9341 device.</param>
-        /// <param name="dataCommandPin">The id of the GPIO pin used to control the DC line (data/command). This pin must be provided.</param>
-        /// <param name="resetPin">The id of the GPIO pin used to control the /RESET line (RST). Can be -1 if not connected</param>
-        /// <param name="backlightPin">The pin for turning the backlight on and off, or -1 if not connected.</param>
-        /// <param name="spiBufferSize">The size of the SPI buffer. If data larger than the buffer is sent then it is split up into multiple transmissions. The default value is 4096.</param>
-        /// <param name="gpioController">The GPIO controller used for communication and controls the the <paramref name="resetPin"/> and the <paramref name="dataCommandPin"/>
-        /// If no Gpio controller is passed in then a default one will be created and disposed when ILI9341 device is disposed.</param>
-        /// <param name="shouldDispose">True to dispose the Gpio Controller when done</param>
-        public Ili9342(SpiDevice spiDevice, int dataCommandPin, int resetPin, int backlightPin = -1, int spiBufferSize = 4096, GpioController? gpioController = null, bool shouldDispose = true)
-            : base(spiDevice, dataCommandPin, resetPin, backlightPin, spiBufferSize, gpioController, shouldDispose)
+        ///
+        /// <exception cref="ArgumentException"> Thrown when one or more arguments have unsupported or illegal values. </exception>
+        ///
+        /// <param name="spiDevice"> The SPI device used for communication. This Spi device will be displayed along with the ILI9341 device. </param>
+        /// <param name="dataCommandPin"> The id of the GPIO pin used to control the DC line (data/command). This pin must be provided. </param>
+        /// <param name="resetPin"> The id of the GPIO pin used to control the /RESET line (RST). Can be -1 if not connected. </param>
+        /// <param name="backlightPin"> (Optional) The pin for turning the backlight on and off, or -1 if not connected. </param>
+        /// <param name="spiBufferSize"> (Optional) The size of the SPI buffer. If data larger than the buffer is sent then it is split up into multiple transmissions. The default value is 4096. </param>
+        /// <param name="gpioController"> (Optional) The GPIO controller used for communication and controls the <paramref name="resetPin"/> and the <paramref name="dataCommandPin"/> If no Gpio controller is passed in then a default one will be created and disposed when ILI9341 device is disposed. </param>
+        /// <param name="orientation"> (Optional) The screen layout. </param>
+        /// <param name="sx"> (Optional) The screen width. </param>
+        /// <param name="sy"> (Optional) The sscreen height. </param>
+        /// <param name="shouldDispose"> (Optional) True to dispose the Gpio Controller when done. </param>
+        public Ili9342(SpiDevice spiDevice, int dataCommandPin, int resetPin, int backlightPin = -1, int spiBufferSize = 4096, GpioController? gpioController = null, Orientation orientation = Orientation.LandscapeNormal, int sx = 320, int sy = 240, bool shouldDispose = true)
+            : base(spiDevice, dataCommandPin, resetPin, backlightPin, spiBufferSize, gpioController, orientation, sx, sy, shouldDispose)
         {
         }
-
-        /// <inheritdoc />
-        public override int ScreenHeight => 240;
-
-        /// <inheritdoc />
-        public override int ScreenWidth => 320;
 
         /// <summary>
         /// Configure the Ili9342 (it uses a different color format than the 9341 and by default is used in landscape mode)

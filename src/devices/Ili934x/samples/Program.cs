@@ -13,7 +13,6 @@ using Iot.Device.Graphics;
 using Iot.Device.Graphics.SkiaSharpAdapter;
 using Iot.Device.Ili934x;
 
-#pragma warning disable CA1416 // Temporarily, will be removed after binding is updated
 Console.WriteLine("Are you using Ft4222? Type 'yes' and press ENTER if so, anything else will be treated as no.");
 bool isFt4222 = Console.ReadLine() == "yes";
 
@@ -28,12 +27,12 @@ using Ili9341 ili9341 = new(displaySPI, pinDC, pinReset, backlightPin: pinLed, g
 
 while (true)
 {
-    using var backBuffer = ili9341.GetBackBufferCompatibleImage();
+    using BitmapImage backBuffer = ili9341.GetBackBufferCompatibleImage();
     foreach (string filepath in Directory.GetFiles(@"images", "*.png").OrderBy(f => f))
     {
         Console.WriteLine($"Drawing {filepath}");
         using var image = BitmapImage.CreateFromFile(filepath);
-        var api = backBuffer.GetDrawingApi();
+        IGraphics api = backBuffer.GetDrawingApi();
         api.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height), new Rectangle(0, 0, image.Width, image.Height));
         ili9341.DrawBitmap(backBuffer);
         ili9341.SendFrame(true);

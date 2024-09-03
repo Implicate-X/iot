@@ -6,7 +6,7 @@ using System.Device.Gpio;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Iot.Device.Multiplexing.Utility
+namespace Iot.Device.Multiplexing
 {
     /// <summary>
     /// Interface that abstracts multiplexing over a segment of outputs.
@@ -88,7 +88,7 @@ namespace Iot.Device.Multiplexing.Utility
                 // create mask to determine value of bit
                 // starts left-most and ends up right-most (after 8th interation)
                 // 0b_1000_0000 is used; other algorithms use 128. They are the same value.
-                int data = (0b_1000_0000 >> i) & value;
+                int data = 0b_1000_0000 >> i & value;
                 int index = offset + 7 - i;
                 _values[index] = data;
             }

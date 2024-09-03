@@ -5,6 +5,7 @@
     <!--Disabling default items so samples source won't get built by the main library-->
     <EnableDefaultItems>false</EnableDefaultItems>
     <Nullable>enable</Nullable>
+    <AssemblyName>Iot.Device.Ili934x</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

@@ -27,14 +27,15 @@ namespace Iot.Device.Ili934x
         public const SpiMode DefaultSpiMode = SpiMode.Mode3;
 
         private const int DefaultSPIBufferSize = 0x1000;
-        internal const byte LcdPortraitConfig = 8 | 0x40;
-        internal const byte LcdLandscapeConfig = 44;
 
         private readonly int _dcPinId;
         private readonly int _resetPinId;
         private readonly int _backlightPin;
         private readonly int _spiBufferSize;
         private readonly bool _shouldDispose;
+        private readonly Orientation _orientation;
+        private readonly int _sx;
+        private readonly int _sy;
 
         private SpiDevice _spiDevice;
         private GpioController _gpioDevice;
@@ -46,17 +47,22 @@ namespace Iot.Device.Ili934x
         private DateTimeOffset _lastUpdate;
 
         /// <summary>
-        /// Initializes new instance of ILI9342 device that will communicate using SPI bus.
+        /// Initializes new instance of ILI9341 device that will communicate using SPI bus.
         /// </summary>
-        /// <param name="spiDevice">The SPI device used for communication. This Spi device will be displayed along with the ILI9341 device.</param>
-        /// <param name="dataCommandPin">The id of the GPIO pin used to control the DC line (data/command). This pin must be provided.</param>
-        /// <param name="resetPin">The id of the GPIO pin used to control the /RESET line (RST). Can be -1 if not connected</param>
-        /// <param name="backlightPin">The pin for turning the backlight on and off, or -1 if not connected.</param>
-        /// <param name="spiBufferSize">The size of the SPI buffer. If data larger than the buffer is sent then it is split up into multiple transmissions. The default value is 4096.</param>
-        /// <param name="gpioController">The GPIO controller used for communication and controls the the <paramref name="resetPin"/> and the <paramref name="dataCommandPin"/>
-        /// If no Gpio controller is passed in then a default one will be created and disposed when ILI9341 device is disposed.</param>
-        /// <param name="shouldDispose">True to dispose the Gpio Controller when done</param>
-        public Ili9341(SpiDevice spiDevice, int dataCommandPin, int resetPin, int backlightPin = -1, int spiBufferSize = DefaultSPIBufferSize, GpioController? gpioController = null, bool shouldDispose = true)
+        ///
+        /// <exception cref="ArgumentException"> Thrown when one or more arguments have unsupported or illegal values. </exception>
+        ///
+        /// <param name="spiDevice"> The SPI device used for communication. This Spi device will be displayed along with the ILI9341 device. </param>
+        /// <param name="dataCommandPin"> The id of the GPIO pin used to control the DC line (data/command). This pin must be provided. </param>
+        /// <param name="resetPin"> The id of the GPIO pin used to control the /RESET line (RST). Can be -1 if not connected. </param>
+        /// <param name="backlightPin"> (Optional) The pin for turning the backlight on and off, or -1 if not connected. </param>
+        /// <param name="spiBufferSize"> (Optional) The size of the SPI buffer. If data larger than the buffer is sent then it is split up into multiple transmissions. The default value is 4096. </param>
+        /// <param name="gpioController"> (Optional) The GPIO controller used for communication and controls the <paramref name="resetPin"/> and the <paramref name="dataCommandPin"/> If no Gpio controller is passed in then a default one will be created and disposed when ILI9341 device is disposed. </param>
+        /// <param name="orientation"> (Optional) The screen layout. </param>
+        /// <param name="sx"> (Optional) The screen width. </param>
+        /// <param name="sy"> (Optional) The sscreen height. </param>
+        /// <param name="shouldDispose"> (Optional) True to dispose the Gpio Controller when done. </param>
+        public Ili9341(SpiDevice spiDevice, int dataCommandPin, int resetPin, int backlightPin = -1, int spiBufferSize = DefaultSPIBufferSize, GpioController? gpioController = null, Orientation orientation = Orientation.PortraitNormal, int sx = 240, int sy = 320, bool shouldDispose = true)
         {
             if (spiBufferSize <= 0)
             {
@@ -68,6 +74,9 @@ namespace Iot.Device.Ili934x
             _resetPinId = resetPin;
             _backlightPin = backlightPin;
             _gpioDevice = gpioController ?? new GpioController();
+            _orientation = orientation;
+            _sx = sx;
+            _sy = sy;
             _shouldDispose = shouldDispose || gpioController is null;
             _fps = 0;
             _lastUpdate = DateTimeOffset.UtcNow;
@@ -105,18 +114,6 @@ namespace Iot.Device.Ili934x
             SendFrame(true);
         }
 
-        /// <summary>
-        /// Width of the screen, in pixels
-        /// </summary>
-        /// <remarks>This is of type int, because all image sizes use int, even though this can never be negative</remarks>
-        public override int ScreenWidth => 240;
-
-        /// <summary>
-        /// Height of the screen, in pixels
-        /// </summary>
-        /// <remarks>This is of type int, because all image sizes use int, even though this can never be negative</remarks>
-        public override int ScreenHeight => 320;
-
         /// <inheritdoc />
         public override PixelFormat NativePixelFormat => PixelFormat.Format16bppRgb565;
 
@@ -131,7 +128,7 @@ namespace Iot.Device.Ili934x
         /// </summary>
         protected virtual void InitDisplayParameters()
         {
-            SendCommand(Ili9341Command.MemoryAccessControl, LcdPortraitConfig);
+            SendCommand(Ili9341Command.MemoryAccessControl, (byte)_orientation);
             SendCommand(Ili9341Command.ColModPixelFormatSet, 0x55); // 16-bits per pixel
             SendCommand(Ili9341Command.FrameRateControlInNormalMode, 0x00, 0x1B);
             SendCommand(Ili9341Command.GammaSet, 0x01);
@@ -396,4 +393,5 @@ namespace Iot.Device.Ili934x
             }
         }
     }
-}
+
+ }

@@ -17,7 +17,7 @@ namespace Iot.Device.Ili934x.Tests
         [Fact]
         public void Convert()
         {
-            Rgb565 a = new Rgb565();
+            Rgb565 a = new();
             Assert.Equal(Color.FromArgb(0, 0, 0), a.ToColor());
 
             Rgb565 b = Rgb565.FromRgba32(Color.White);
@@ -33,29 +33,29 @@ namespace Iot.Device.Ili934x.Tests
             b = Rgb565.FromRgba32(Color.FromArgb(0, 0, 103));
             Assert.Equal(Color.FromArgb(0, 0, 103), b.ToColor());
 
-            Rgb565 d = new Rgb565(0xf800);
+            Rgb565 d = new(0xf800);
             Assert.Equal(0xf800, d.PackedValue);
         }
 
         [Fact]
         public void Init()
         {
-            Rgb565 c = new Rgb565(255, 255, 255);
+            Rgb565 c = new(255, 255, 255);
             Assert.Equal(0xFFFF, c.PackedValue);
 
             Rgb565 b = Rgb565.FromRgba32(Color.Red);
             Assert.NotEqual(0, b.PackedValue);
 
-            Rgb565 d = new Rgb565(0xff, 0, 0);
+            Rgb565 d = new(0xff, 0, 0);
             Assert.Equal(b.PackedValue, d.PackedValue);
             Assert.Equal(255, d.R);
             Assert.Equal(0x00F8, d.PackedValue);
 
-            Rgb565 e = new Rgb565(0, 0xff, 0);
+            Rgb565 e = new(0, 0xff, 0);
             Assert.Equal(0xe007, e.PackedValue);
             Assert.Equal(255, e.G);
 
-            Rgb565 f = new Rgb565(0, 0, 0xff);
+            Rgb565 f = new(0, 0, 0xff);
             Assert.Equal(0x1f00, f.PackedValue);
             Assert.Equal(255, f.B);
         }
@@ -63,9 +63,9 @@ namespace Iot.Device.Ili934x.Tests
         [Fact]
         public void EqualIsEqual()
         {
-            Rgb565 a = new Rgb565(10, 52, 101);
-            Rgb565 b = new Rgb565(a.PackedValue);
-            Rgb565 c = new Rgb565(0x2345);
+            Rgb565 a = new(10, 52, 101);
+            Rgb565 b = new(a.PackedValue);
+            Rgb565 c = new(0x2345);
             Assert.True(a == b);
             Assert.True(a.Equals(b));
             Assert.True(a != c);
@@ -75,8 +75,8 @@ namespace Iot.Device.Ili934x.Tests
         [Fact]
         public void AlmostEqual()
         {
-            Rgb565 a = new Rgb565(10, 52, 101);
-            Rgb565 b = new Rgb565(12, 53, 102);
+            Rgb565 a = new(10, 52, 101);
+            Rgb565 b = new(12, 53, 102);
             // The delta value is in visible bits, so these are anyway equal
             Assert.True(Rgb565.AlmostEqual(a, b, 0));
 

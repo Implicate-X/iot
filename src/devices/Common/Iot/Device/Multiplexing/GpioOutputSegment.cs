@@ -6,7 +6,6 @@ using System.Device.Gpio;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Iot.Device.Multiplexing.Utility;
 
 namespace Iot.Device.Multiplexing
 {

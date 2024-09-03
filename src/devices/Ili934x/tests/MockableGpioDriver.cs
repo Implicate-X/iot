@@ -4,7 +4,7 @@
 using System.Device.Gpio;
 using System.Threading;
 
-namespace Iot.Device.Ili934x.Tests;
+namespace Ili934x.Tests;
 
 /// <summary>
 /// A wrapper class that exposes the internal protected methods, so that they can be mocked.

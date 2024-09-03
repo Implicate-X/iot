@@ -5,6 +5,7 @@
     <LangVersion>10</LangVersion>
     <IsPackable>false</IsPackable>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <RootNamespace>Iot.Device.Ili934x.Tests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
